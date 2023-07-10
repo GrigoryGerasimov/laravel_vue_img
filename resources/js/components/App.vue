@@ -1,13 +1,18 @@
 <script>
 import { defineComponent } from 'vue'
+import DropzoneField from './DropzoneField.vue'
 
 export default defineComponent({
-    name: 'App'
+    name: 'App',
+
+    components: {
+        DropzoneField
+    }
 })
 </script>
 
 <template>
-    App Init
+    <DropzoneField/>
 </template>
 
 <style scoped>
