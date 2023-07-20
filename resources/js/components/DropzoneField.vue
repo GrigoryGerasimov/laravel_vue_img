@@ -13,9 +13,15 @@ export default defineComponent({
 
     mounted() {
         this.dz = new Dropzone(this.$refs['dz-field'], {
-            url: 'test'
+            url: 'test',
+            autoProcessQueue: false,
+            addRemoveLinks: true
         })
-    }
+
+        this.dz.on('addedfiles', () => {
+            this.$emit('filesAdded', this.dz)
+        })
+    },
 })
 </script>
 
