@@ -11,17 +11,32 @@ export default defineComponent({
 
     data() {
         return {
-            images: null
+            title: null,
+            images: null,
+            dropZone: null
+        }
+    },
+
+    computed: {
+        isDisabled() {
+            return !(this.title && this.images)
         }
     },
 
     methods: {
         getDzFiles(dropZone) {
+            this.dropZone = dropZone
             this.images = dropZone.getAcceptedFiles()
         },
 
         store() {
-            console.log(this.images)
+            const data = new FormData()
+            data.append('title', this.title)
+            this.images.forEach(img => {
+                data.append('images[]', img)
+                this.dropZone.removeFile(img)
+            })
+            axios.post('api/posts', data)
         }
     }
 })
@@ -35,6 +50,7 @@ export default defineComponent({
             name='title'
             placeholder='title'
             class='form-control form-control-custom my-5'
+            v-model='title'
         />
     </div>
     <DropzoneField @files-added='getDzFiles'/>
@@ -42,6 +58,7 @@ export default defineComponent({
         type='submit'
         class='btn btn-outline-dark my-5'
         @click.prevent='store'
+        :disabled='isDisabled'
     >
         Send
     </button>
