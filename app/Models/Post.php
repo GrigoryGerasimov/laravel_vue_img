@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\{Model, SoftDeletes};
+use Illuminate\Database\Eloquent\{Model, Relations\HasMany, SoftDeletes};
 
 class Post extends Model
 {
@@ -18,4 +18,12 @@ class Post extends Model
      * @var bool
      */
     protected $guarded = false;
+
+    /**
+     * @return HasMany
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class, 'post_id', 'id');
+    }
 }

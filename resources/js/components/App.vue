@@ -1,19 +1,27 @@
 <script>
 import { defineComponent } from 'vue'
+import { Button, Divider } from './Common'
+import { FormControl } from './Form'
+import Post from './Post/Post.vue'
 import DropzoneField from './DropzoneField.vue'
 
 export default defineComponent({
     name: 'App',
 
     components: {
-        DropzoneField
+        DropzoneField,
+        Button,
+        Divider,
+        Post,
+        FormControl
     },
 
     data() {
         return {
             title: null,
             images: null,
-            dropZone: null
+            dropZone: null,
+            posts: null
         }
     },
 
@@ -29,7 +37,7 @@ export default defineComponent({
             this.images = dropZone.getAcceptedFiles()
         },
 
-        store() {
+        async store() {
             const data = new FormData()
             data.append('title', this.title)
             this.images.forEach(img => {
@@ -38,39 +46,37 @@ export default defineComponent({
             })
             this.title = null
 
-            axios.post('/api/posts', data)
+            await axios.post('/api/posts', data)
+        },
+
+        async getAll() {
+            const response = await axios.get('/api/posts')
+            this.posts = response.data
         }
+    },
+
+    mounted() {
+        this.getAll()
     }
 })
 </script>
 
 <template>
-    <div class='input-group d-flex flex-row align-items-baseline'>
-        <label for='title' class='form-label me-5'>Title</label>
-        <input
-            id='title'
-            name='title'
-            placeholder='title'
-            class='form-control form-control-custom my-5'
-            v-model='title'
-        />
-    </div>
+    <FormControl
+        id='title'
+        label='Title'
+        name='title'
+        placeholder='title'
+        v-model='title'
+    />
     <DropzoneField @files-added='getDzFiles'/>
-    <button
-        type='submit'
-        class='btn btn-outline-dark my-5'
-        @click.prevent='store'
-        :disabled='isDisabled'
-    >
-        Send
-    </button>
+    <Button type='submit' :onClick='store' :disabled='isDisabled'>Send</Button>
+    <Divider/>
+    <div v-show='posts' v-for='post in posts'>
+        <Post :post='post'/>
+    </div>
 </template>
 
 <style scoped>
-.form-control-custom {
-    max-width: 250px;
-    border-top: none;
-    border-right: none;
-    border-left: none;
-}
+
 </style>
