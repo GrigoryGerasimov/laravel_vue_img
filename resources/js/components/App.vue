@@ -36,7 +36,9 @@ export default defineComponent({
                 data.append('images[]', img)
                 this.dropZone.removeFile(img)
             })
-            axios.post('api/posts', data)
+            this.title = null
+
+            axios.post('/api/posts', data)
         }
     }
 })
