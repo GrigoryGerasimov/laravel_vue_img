@@ -17,6 +17,7 @@ class ImageResource extends JsonResource
         return [
             'path' => $this->path,
             'url' => $this->url,
+            'preview_url' => $this->preview_url,
             'post_id' => $this->post_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

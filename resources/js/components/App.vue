@@ -1,9 +1,8 @@
 <script>
 import { defineComponent } from 'vue'
 import { Button, Divider } from './Common'
-import { FormControl } from './Form'
+import { FormControl, DropzoneField } from './Form'
 import Post from './Post/Post.vue'
-import DropzoneField from './DropzoneField.vue'
 
 export default defineComponent({
     name: 'App',
@@ -47,6 +46,8 @@ export default defineComponent({
             this.title = null
 
             await axios.post('/api/posts', data)
+
+            await this.getAll()
         },
 
         async getAll() {
