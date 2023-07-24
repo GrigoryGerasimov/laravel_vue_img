@@ -5,16 +5,17 @@ export default defineComponent({
     name: 'Image',
 
     props: {
-        image: Object
+        image: Object,
+        src: String
     }
 })
 </script>
 
 <template>
     <img
-        :src='image.url'
+        :src='src'
         :alt='image.path'
-        class='w-25 my-2'
+        class='my-2'
     />
 </template>
 

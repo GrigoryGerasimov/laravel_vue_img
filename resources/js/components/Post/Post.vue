@@ -1,10 +1,10 @@
 <script>
 import { defineComponent } from 'vue'
-import Image from '../Image.vue'
+import Image from '../Image/Image.vue'
 
 export default defineComponent({
     name: 'Post',
-    
+
     components: {
         Image
     },
@@ -19,7 +19,12 @@ export default defineComponent({
     <div class='my-5'>
         <strong>{{ post.title }}</strong>
         <div v-for='img in post.images'>
-            <Image :image='img'/>
+            <div class='mb-1'>
+                <Image :image='img' :src='img.preview_url'/>
+            </div>
+            <div>
+                <Image :image='img' :src='img.url' class='w-75'/>
+            </div>
         </div>
     </div>
 </template>
