@@ -11,12 +11,33 @@ export default defineComponent({
 
     data: () => ({
         content: null
-    })
+    }),
+
+    methods: {
+        async imageAddingHandler(file, Editor, cursorLocation, resetUploader) {
+            try {
+                const data = new FormData()
+                data.append('image', file)
+
+                const response = await axios.post('/api/posts/images', data)
+                const url = response.data.url
+
+                Editor.insertEmbed(cursorLocation, 'image', url)
+                resetUploader()
+            } catch (err) {
+                console.log(err)
+            }
+        }
+    }
 })
 </script>
 
 <template>
-    <vue-editor v-model='content'/>
+    <vue-editor
+        useCustomImageHandler
+        @image-added='imageAddingHandler'
+        v-model='content'
+    />
 </template>
 
 <style scoped>
