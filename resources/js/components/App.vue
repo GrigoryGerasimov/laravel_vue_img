@@ -26,7 +26,7 @@ export default defineComponent({
 
     computed: {
         isDisabled() {
-            return !(this.title && this.images)
+            return !(this.title && this.content)
         }
     },
 
@@ -36,14 +36,23 @@ export default defineComponent({
             this.images = dropZone.getAcceptedFiles()
         },
 
+        getContent(content) {
+            this.content = content
+        },
+
         async store() {
             try {
                 const data = new FormData()
                 data.append('title', this.title)
-                this.images.forEach(img => {
-                    data.append('images[]', img)
-                    this.dropZone.removeFile(img)
-                })
+                data.append('content', this.content)
+
+                if (this.images && this.images.length) {
+                    this.images.forEach(img => {
+                        data.append('images[]', img)
+                        this.dropZone.removeFile(img)
+                    })
+                }
+
                 this.title = null
 
                 await axios.post('/api/posts', data)
@@ -75,7 +84,7 @@ export default defineComponent({
         v-model='title'
     />
     <DropzoneField @files-added='getDzFiles'/>
-    <Editor/>
+    <Editor @emit-content='getContent'/>
     <Button type='submit' :onClick='store' :disabled='isDisabled'>Send</Button>
     <Divider/>
     <div v-show='posts' v-for='post in posts'>
