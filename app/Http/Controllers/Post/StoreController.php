@@ -15,30 +15,34 @@ class StoreController extends Controller
     {
         $data = $request->validated();
 
-        $images = $data['images'];
-        unset($data['images']);
+        if (key_exists('images', $data)) {
+            $images = $data['images'];
+            unset($data['images']);
+        }
 
         $post = Post::firstOrCreate(['title' => $data['title']], $data);
 
-        foreach ($images as $image) {
-            $imgPathName = md5(Carbon::now()->timestamp . $image->getClientOriginalName()) . '.' . $image->getClientOriginalExtension();
-            $imgPath = Storage::disk('public')->putFileAs('images', $image, $imgPathName);
-            $prevImgPath = 'prev_' . $imgPathName;
+        if (isset($images)) {
+            foreach ($images as $image) {
+                $imgPathName = md5(Carbon::now()->timestamp . $image->getClientOriginalName()) . '.' . $image->getClientOriginalExtension();
+                $imgPath = Storage::disk('public')->putFileAs('images', $image, $imgPathName);
+                $prevImgPath = 'prev_' . $imgPathName;
 
-            $urlPath = url('/storage/' . $imgPath);
-            $prevUrlPath = url('/storage/images/prev/' . $prevImgPath);
+                $urlPath = url('/storage/' . $imgPath);
+                $prevUrlPath = url('/storage/images/prev/' . $prevImgPath);
 
-            if (!file_exists('storage/images/prev')) {
-                mkdir('storage/images/prev', 0775, true);
+                if (!file_exists('storage/images/prev')) {
+                    mkdir('storage/images/prev', 0775, true);
+                }
+                InterventionImage::make($image)->fit(100, 100)->save('storage/images/prev/' . $prevImgPath);
+
+                Image::create([
+                    'path' => $imgPathName,
+                    'url' => $urlPath,
+                    'preview_url' => $prevUrlPath,
+                    'post_id' => $post->id
+                ]);
             }
-            InterventionImage::make($image)->fit(100, 100)->save('storage/images/prev/' . $prevImgPath);
-
-            Image::create([
-                'path' => $imgPathName,
-                'url' => $urlPath,
-                'preview_url' => $prevUrlPath,
-                'post_id' => $post->id
-            ]);
         }
     }
 }

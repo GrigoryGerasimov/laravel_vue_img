@@ -18,7 +18,7 @@ export default defineComponent({
 <template>
     <div class='my-5'>
         <strong>{{ post.title }}</strong>
-        <div v-for='img in post.images'>
+        <div v-show='post.images' v-for='img in post.images'>
             <div class='mb-1'>
                 <Image :image='img' :src='img.preview_url'/>
             </div>
@@ -26,6 +26,7 @@ export default defineComponent({
                 <Image :image='img' :src='img.url' class='w-75'/>
             </div>
         </div>
+        <div class='ql-editor' v-html='post.content'></div>
     </div>
 </template>
 

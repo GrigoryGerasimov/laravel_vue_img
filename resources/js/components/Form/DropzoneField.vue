@@ -32,8 +32,12 @@ export default defineComponent({
     </div>
 </template>
 
-<style scoped>
+<style>
 .width-fit {
     width: fit-content;
+}
+.dz-success-mark,
+.dz-error-mark {
+    display: none
 }
 </style>

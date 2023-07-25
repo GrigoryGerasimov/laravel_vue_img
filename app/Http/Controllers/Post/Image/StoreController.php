@@ -18,6 +18,6 @@ class StoreController extends Controller
         $imagePathName = md5(Carbon::now() . $image->getClientOriginalName()) . '.' . $image->getClientOriginalExtension();
         $imagePath = Storage::disk('public')->putFileAs('images/content', $image, $imagePathName);
 
-        return response()->json(['url' => url('/storage', $imagePath)]);
+        return response()->json(['url' => url('/storage/' . $imagePath)]);
     }
 }

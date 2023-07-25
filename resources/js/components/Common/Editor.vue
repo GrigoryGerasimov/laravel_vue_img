@@ -28,6 +28,10 @@ export default defineComponent({
                 console.log(err)
             }
         }
+    },
+
+    updated() {
+        this.$emit('emitContent', this.content)
     }
 })
 </script>
