@@ -1,6 +1,6 @@
 <script>
 import { defineComponent } from 'vue'
-import { Button, Divider } from './Common'
+import { Button, Divider, Editor } from './Common'
 import { FormControl, DropzoneField } from './Form'
 import Post from './Post/Post.vue'
 
@@ -12,17 +12,17 @@ export default defineComponent({
         Button,
         Divider,
         Post,
-        FormControl
+        FormControl,
+        Editor
     },
 
-    data() {
-        return {
-            title: null,
-            images: null,
-            dropZone: null,
-            posts: null
-        }
-    },
+    data: () => ({
+        title: null,
+        images: null,
+        dropZone: null,
+        posts: null,
+        content: null
+    }),
 
     computed: {
         isDisabled() {
@@ -71,6 +71,7 @@ export default defineComponent({
         v-model='title'
     />
     <DropzoneField @files-added='getDzFiles'/>
+    <Editor/>
     <Button type='submit' :onClick='store' :disabled='isDisabled'>Send</Button>
     <Divider/>
     <div v-show='posts' v-for='post in posts'>
