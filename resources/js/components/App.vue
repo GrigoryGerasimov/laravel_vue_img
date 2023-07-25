@@ -37,17 +37,21 @@ export default defineComponent({
         },
 
         async store() {
-            const data = new FormData()
-            data.append('title', this.title)
-            this.images.forEach(img => {
-                data.append('images[]', img)
-                this.dropZone.removeFile(img)
-            })
-            this.title = null
+            try {
+                const data = new FormData()
+                data.append('title', this.title)
+                this.images.forEach(img => {
+                    data.append('images[]', img)
+                    this.dropZone.removeFile(img)
+                })
+                this.title = null
 
-            await axios.post('/api/posts', data)
+                await axios.post('/api/posts', data)
 
-            await this.getAll()
+                await this.getAll()
+            } catch (err) {
+                console.log(err)
+            }
         },
 
         async getAll() {

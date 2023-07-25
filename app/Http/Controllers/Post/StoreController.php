@@ -11,7 +11,7 @@ use Intervention\Image\Facades\Image as InterventionImage;
 
 class StoreController extends Controller
 {
-    public function __invoke(StoreRequest $request)
+    public function __invoke(StoreRequest $request): void
     {
         $data = $request->validated();
 
