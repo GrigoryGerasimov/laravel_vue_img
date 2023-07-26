@@ -30,6 +30,15 @@ export default defineComponent({
         async postIdToUpdate() {
             await this.getOne()
             this.title = this.postToUpdate.title
+
+            this.postToUpdate.images.forEach(img => {
+                const file = {
+                    id: img.id,
+                    name: img.path,
+                    size: img.size
+                }
+                this.dropZone.displayExistingFile(file, img.preview_url)
+            })
         },
     },
 
