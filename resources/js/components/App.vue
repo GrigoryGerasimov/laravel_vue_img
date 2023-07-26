@@ -21,8 +21,17 @@ export default defineComponent({
         images: null,
         dropZone: null,
         posts: null,
-        content: null
+        content: null,
+        postIdToUpdate: null,
+        postToUpdate: null
     }),
+
+    watch: {
+        async postIdToUpdate() {
+            await this.getOne()
+            this.title = this.postToUpdate.title
+        },
+    },
 
     computed: {
         isDisabled() {
@@ -38,6 +47,10 @@ export default defineComponent({
 
         getContent(content) {
             this.content = content
+        },
+
+        getPostIdToUpdate(postId) {
+            this.postIdToUpdate = postId;
         },
 
         async store() {
@@ -66,6 +79,11 @@ export default defineComponent({
         async getAll() {
             const response = await axios.get('/api/posts')
             this.posts = response.data
+        },
+
+        async getOne() {
+            const response = await axios.get(`/api/posts/${this.postIdToUpdate}`)
+            this.postToUpdate = response.data
         }
     },
 
@@ -84,11 +102,11 @@ export default defineComponent({
         v-model='title'
     />
     <DropzoneField @files-added='getDzFiles'/>
-    <Editor @emit-content='getContent'/>
+    <Editor @emit-content='getContent' :postToUpdate='postToUpdate'/>
     <Button type='submit' :onClick='store' :disabled='isDisabled'>Send</Button>
     <Divider/>
     <div v-show='posts' v-for='post in posts'>
-        <Post :post='post'/>
+        <Post :post='post' @get-post-id='getPostIdToUpdate'/>
     </div>
 </template>
 
