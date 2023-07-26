@@ -20,6 +20,11 @@ class UpdateController extends Controller
             unset($data['images']);
         }
 
+        if (key_exists('image_ids_to_remove', $data)) {
+            $imageIdsToRemove = $data['image_ids_to_remove'];
+            unset($data['image_ids_to_remove']);
+        }
+
         $post->update($data);
 
         if (isset($images)) {
@@ -42,6 +47,16 @@ class UpdateController extends Controller
                     'preview_url' => $prevUrlPath,
                     'post_id' => $post->id
                 ]);
+            }
+        }
+
+        if (isset($imageIdsToRemove)) {
+            foreach ($post->images as $postImage) {
+                if (in_array($postImage->id, $imageIdsToRemove)) {
+                    Storage::disk('public')->delete('images/' . $postImage->path);
+                    Storage::disk('public')->delete('images/prev/' . 'prev_' . $postImage->path);
+                    $postImage->delete();
+                }
             }
         }
     }

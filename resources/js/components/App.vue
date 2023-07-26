@@ -23,7 +23,9 @@ export default defineComponent({
         posts: null,
         content: null,
         postIdToUpdate: null,
-        postToUpdate: null
+        postToUpdate: null,
+        imageIdsToRemove: [],
+        imageUrlsToRemove: []
     }),
 
     watch: {
@@ -55,6 +57,10 @@ export default defineComponent({
 
         getDzFiles(dropZone) {
             this.images = dropZone.getAcceptedFiles()
+        },
+
+        getDzRemovedFileId(id) {
+            this.imageIdsToRemove.push(id)
         },
 
         getContent(content) {
@@ -105,6 +111,12 @@ export default defineComponent({
                 data.append('content', this.content)
                 data.append('_method', 'PATCH')
 
+                if (this.imageIdsToRemove.length) {
+                    this.imageIdsToRemove.forEach(imageId => {
+                        data.append('image_ids_to_remove[]', imageId)
+                    })
+                }
+
                 if (this.images && this.images.length) {
                     this.images.forEach(img => {
                         data.append('images[]', img)
@@ -137,7 +149,7 @@ export default defineComponent({
         placeholder='title'
         v-model='title'
     />
-    <DropzoneField @dropzone-init='getDz' @files-added='getDzFiles'/>
+    <DropzoneField @dropzone-init='getDz' @files-added='getDzFiles' @file-removed='getDzRemovedFileId'/>
     <Editor @emit-content='getContent' :postToUpdate='postToUpdate'/>
     <Button type='submit' :onClick='this.postIdToUpdate ? update : store' :disabled='isDisabled'>Send</Button>
     <Divider/>
