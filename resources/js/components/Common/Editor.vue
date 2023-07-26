@@ -9,9 +9,21 @@ export default defineComponent({
         VueEditor
     },
 
-    data: () => ({
-        content: null
-    }),
+    props: {
+        postToUpdate: Object
+    },
+
+    data() {
+        return {
+            content: null
+        }
+    },
+
+    watch: {
+        postToUpdate() {
+            this.content = this.postToUpdate.content
+        }
+    },
 
     methods: {
         async imageAddingHandler(file, Editor, cursorLocation, resetUploader) {
