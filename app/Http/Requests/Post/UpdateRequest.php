@@ -24,7 +24,8 @@ class UpdateRequest extends FormRequest
         return [
             'title' => 'required|string',
             'images' => 'nullable|array',
-            'content' => 'required|string'
+            'content' => 'required|string',
+            'image_ids_to_remove' => 'nullable|array'
         ];
     }
 }

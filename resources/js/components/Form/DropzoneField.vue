@@ -21,6 +21,10 @@ export default defineComponent({
         this.dz.on('addedfiles', () => {
             this.$emit('filesAdded', this.dz)
         })
+
+        this.dz.on('removedfile', file => {
+            this.$emit('fileRemoved', file.id)
+        })
     },
 })
 </script>
