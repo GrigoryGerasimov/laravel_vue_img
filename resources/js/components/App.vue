@@ -49,8 +49,11 @@ export default defineComponent({
     },
 
     methods: {
-        getDzFiles(dropZone) {
+        getDz(dropZone) {
             this.dropZone = dropZone
+        },
+
+        getDzFiles(dropZone) {
             this.images = dropZone.getAcceptedFiles()
         },
 
@@ -60,6 +63,16 @@ export default defineComponent({
 
         getPostIdToUpdate(postId) {
             this.postIdToUpdate = postId;
+        },
+
+        async getAll() {
+            const response = await axios.get('/api/posts')
+            this.posts = response.data
+        },
+
+        async getOne() {
+            const response = await axios.get(`/api/posts/${this.postIdToUpdate}`)
+            this.postToUpdate = response.data
         },
 
         async store() {
@@ -85,14 +98,28 @@ export default defineComponent({
             }
         },
 
-        async getAll() {
-            const response = await axios.get('/api/posts')
-            this.posts = response.data
-        },
+        async update() {
+            try {
+                const data = new FormData()
+                data.append('title', this.title)
+                data.append('content', this.content)
+                data.append('_method', 'PATCH')
 
-        async getOne() {
-            const response = await axios.get(`/api/posts/${this.postIdToUpdate}`)
-            this.postToUpdate = response.data
+                if (this.images && this.images.length) {
+                    this.images.forEach(img => {
+                        data.append('images[]', img)
+                        this.dropZone.removeFile(img)
+                    })
+                }
+
+                this.title = null
+
+                await axios.post(`/api/posts/${this.postIdToUpdate}`, data)
+
+                await this.getAll()
+            } catch (err) {
+                console.log(err)
+            }
         }
     },
 
@@ -110,9 +137,9 @@ export default defineComponent({
         placeholder='title'
         v-model='title'
     />
-    <DropzoneField @files-added='getDzFiles'/>
+    <DropzoneField @dropzone-init='getDz' @files-added='getDzFiles'/>
     <Editor @emit-content='getContent' :postToUpdate='postToUpdate'/>
-    <Button type='submit' :onClick='store' :disabled='isDisabled'>Send</Button>
+    <Button type='submit' :onClick='this.postIdToUpdate ? update : store' :disabled='isDisabled'>Send</Button>
     <Divider/>
     <div v-show='posts' v-for='post in posts'>
         <Post :post='post' @get-post-id='getPostIdToUpdate'/>
