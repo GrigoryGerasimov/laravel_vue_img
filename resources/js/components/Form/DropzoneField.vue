@@ -16,6 +16,8 @@ export default defineComponent({
             addRemoveLinks: true
         })
 
+        this.$emit('dropzoneInit', this.dz)
+
         this.dz.on('addedfiles', () => {
             this.$emit('filesAdded', this.dz)
         })
