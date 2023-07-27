@@ -10,7 +10,8 @@ export default defineComponent({
     },
 
     props: {
-        postToUpdate: Object
+        postToUpdate: Object,
+        updatedContent: String
     },
 
     data() {
@@ -22,6 +23,9 @@ export default defineComponent({
     watch: {
         postToUpdate() {
             this.content = this.postToUpdate.content
+        },
+        updatedContent() {
+            this.content = this.updatedContent
         }
     },
 
@@ -39,6 +43,10 @@ export default defineComponent({
             } catch (err) {
                 console.log(err)
             }
+        },
+
+        async imageRemovingHandler(file) {
+            this.$emit('emitRemovedFileId', file)
         }
     },
 
@@ -51,6 +59,7 @@ export default defineComponent({
 <template>
     <vue-editor
         useCustomImageHandler
+        @image-removed='imageRemovingHandler'
         @image-added='imageAddingHandler'
         v-model='content'
     />
