@@ -63,6 +63,10 @@ export default defineComponent({
             this.imageIdsToRemove.push(id)
         },
 
+        getEditorRemovedFileId(id) {
+            this.imageUrlsToRemove.push(id)
+        },
+
         getContent(content) {
             this.content = content
         },
@@ -95,6 +99,7 @@ export default defineComponent({
                 }
 
                 this.title = null
+                this.content = null
 
                 await axios.post('/api/posts', data)
 
@@ -117,6 +122,12 @@ export default defineComponent({
                     })
                 }
 
+                if (this.imageUrlsToRemove.length) {
+                    this.imageUrlsToRemove.forEach(imageId => {
+                        data.append('image_urls_to_remove[]', imageId)
+                    })
+                }
+
                 if (this.images && this.images.length) {
                     this.images.forEach(img => {
                         data.append('images[]', img)
@@ -125,6 +136,9 @@ export default defineComponent({
                 }
 
                 this.title = null
+                this.content = null
+                const dzFilesCollection = this.dropZone.previewsContainer.querySelectorAll('.dz-image-preview')
+                for (const dzFile of dzFilesCollection) dzFile.remove()
 
                 await axios.post(`/api/posts/${this.postIdToUpdate}`, data)
 
@@ -149,9 +163,24 @@ export default defineComponent({
         placeholder='title'
         v-model='title'
     />
-    <DropzoneField @dropzone-init='getDz' @files-added='getDzFiles' @file-removed='getDzRemovedFileId'/>
-    <Editor @emit-content='getContent' :postToUpdate='postToUpdate'/>
-    <Button type='submit' :onClick='this.postIdToUpdate ? update : store' :disabled='isDisabled'>Send</Button>
+    <DropzoneField
+        @dropzone-init='getDz'
+        @files-added='getDzFiles'
+        @file-removed='getDzRemovedFileId'
+    />
+    <Editor
+        @emit-removed-file-id='getEditorRemovedFileId'
+        @emit-content='getContent'
+        :postToUpdate='postToUpdate'
+        :updatedContent='content'
+    />
+    <Button
+        type='submit'
+        :disabled='isDisabled'
+        :onClick='this.postIdToUpdate ? update : store'
+    >
+        Send
+    </Button>
     <Divider/>
     <div v-show='posts' v-for='post in posts'>
         <Post :post='post' @get-post-id='getPostIdToUpdate'/>
